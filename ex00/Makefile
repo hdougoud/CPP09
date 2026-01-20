@@ -1,4 +1,4 @@
-NAME		= bitcoin_exchange
+NAME		= btc
 CXX			= g++
 CXXFLAGS	= -Wall -Werror -Wextra -std=c++98 -Iinclude
 
