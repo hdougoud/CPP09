@@ -34,6 +34,9 @@
 *.exe
 *.out
 *.app
+btc
+RPN
+PmergeMe
 
 ### Linux ###
 *~
