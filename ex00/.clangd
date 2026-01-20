@@ -1,0 +1,4 @@
+If:
+  PathMatch: .*\.tpp
+CompileFlags:
+  Add: [-xc++-header, -std=c++98, -Wall, -Wextra, -Werror, -Iinclude]
