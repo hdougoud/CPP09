@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:22:39 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/26 16:22:19 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/01/26 23:53:58 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #include <fstream>
 #include <map>
 #include <string>
+
+#define MIN_YEAR 2009
+#define MAX_YEAR 2026
 
 class BitcoinExchange
 {

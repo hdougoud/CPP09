@@ -6,17 +6,17 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/26 17:17:52 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/01/26 23:54:08 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/BitcoinExchange.hpp"
 #include <cctype>
+#include <cstdlib>
 #include <errno.h>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstdlib>
 #include "../include/color.hpp"
 
 void	extractCSV(std::ofstream &fs, BitcoinExchange &be);
@@ -66,10 +66,8 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 
 	errno = 0;
 	getline(fs, date);
-	while (fs.peek() != fs.eof())
+	while (getline(fs, date, ',') && getline(fs, value))
 	{
-		getline(fs, date, ',');
-		getline(fs, value);
 		if (isDateValide(date))
 		{
 			std::cout << "date invalid" << std::endl;
@@ -87,12 +85,15 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 
 bool	BitcoinExchange::isDateValide(const std::string &str)
 {
-//	int							npos;
-//	int							year, month, day;
-//	std::string::const_iterator	it;
+	int	firstDash, secondDash;
+	int	year, month, day;
 
-	std::cout << str.length() << std::endl;
-	if (str.length() != 10)
-		return (1);
+	firstDash = str.find('-');
+	secondDash = str.rfind('-');
+	year = std::atoi(str.substr(0, firstDash).c_str());
+	month = std::atoi(str.substr(firstDash + 1, secondDash - firstDash - 1).c_str());
+	day = std::atoi(str.substr(secondDash + 1).c_str());
+	//std::cout << year << " " << month << " " << day << "\n";
 	return (0);
 }
+
