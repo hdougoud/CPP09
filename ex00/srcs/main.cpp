@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/26 16:42:40 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/01/26 16:48:24 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,13 @@ int main(int ac, char **av)
 		std::cout << RESET << std::endl;
 		return (1);
 	}
-	BitcoinExchange	be("data.csv");
-
+	(void) av;
+	try {
+		BitcoinExchange	be("data.csv");
+	}
+	catch (std::runtime_error &e) {
+		std::cout << C_RED << e.what() << RESET << std::endl;
+		return (1);
+	}
 	return (0);
 }
