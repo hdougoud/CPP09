@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:22:39 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/26 23:53:58 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/01/27 19:06:19 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,5 @@ class BitcoinExchange
 
 		bool		read_csv(std::ifstream &fs);
 		static bool	isDateValide(const std::string &str);
+		static bool	strToInt(const std::string &str, int &value);
 };

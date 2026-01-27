@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/26 23:54:08 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/01/27 21:40:19 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include "../include/color.hpp"
 
@@ -85,15 +86,27 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 
 bool	BitcoinExchange::isDateValide(const std::string &str)
 {
-	int	firstDash, secondDash;
-	int	year, month, day;
+	char				dash1, dash2;
+	int					year, month, day;
+	std::stringstream	ss(str);
 
-	firstDash = str.find('-');
-	secondDash = str.rfind('-');
-	year = std::atoi(str.substr(0, firstDash).c_str());
-	month = std::atoi(str.substr(firstDash + 1, secondDash - firstDash - 1).c_str());
-	day = std::atoi(str.substr(secondDash + 1).c_str());
-	//std::cout << year << " " << month << " " << day << "\n";
+	ss >> year >> dash1 >> month >> dash2 >> day;
+	if (ss.fail() || !ss.eof())
+		return (1);
+	if (dash1 != '-' || dash2 != '-')
+		return (1);
+	std::cout << year << " " << month << " " << day << std::endl;
+
+	return (0);
+}
+
+bool	BitcoinExchange::strToInt(const std::string &str, int &value)
+{
+	std::stringstream ss(str);
+
+	ss >> value;
+	if (ss.fail() || !ss.eof())
+		return (1);
 	return (0);
 }
 
