@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/27 21:40:19 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/01/28 18:36:19 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,13 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 	{
 		if (isDateValide(date))
 		{
-			std::cout << "date invalid" << std::endl;
+			std::cout << "Invalid date format" << std::endl;
 			return (1);
 		}
 		this->_exchange[date] = std::strtof(value.c_str(), NULL);
 		if (errno)
 		{
-			std::cout << "errno error" << std::endl;
+			std::cout << "Invalid ammount format" << errno << std::endl;
 			return (1);
 		}
 	}
@@ -86,8 +86,19 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 
 bool	BitcoinExchange::isDateValide(const std::string &str)
 {
-	char				dash1, dash2;
 	int					year, month, day;
+
+	if (extractDate(str, year, month, day))
+		return (1);
+	if (validateDate(year, month, day))
+		return (1);
+	std::cout << year << " " << month << " " << day << std::endl;
+	return (0);
+}
+
+bool	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
+{
+	char				dash1, dash2;
 	std::stringstream	ss(str);
 
 	ss >> year >> dash1 >> month >> dash2 >> day;
@@ -95,17 +106,16 @@ bool	BitcoinExchange::isDateValide(const std::string &str)
 		return (1);
 	if (dash1 != '-' || dash2 != '-')
 		return (1);
-	std::cout << year << " " << month << " " << day << std::endl;
-
 	return (0);
 }
 
-bool	BitcoinExchange::strToInt(const std::string &str, int &value)
+bool	BitcoinExchange::validateDate(int &year, int &month, int &day)
 {
-	std::stringstream ss(str);
-
-	ss >> value;
-	if (ss.fail() || !ss.eof())
+	if (year < MIN_YEAR || year > MAX_YEAR)
+		return (1);
+	if (month < 1 || month > 12)
+		return (1);
+	if (day < 1 || day > 31)
 		return (1);
 	return (0);
 }
