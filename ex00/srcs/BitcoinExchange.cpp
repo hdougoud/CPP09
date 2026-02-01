@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/28 18:36:19 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/01 23:54:00 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 	std::string	value;
 
 	errno = 0;
-	getline(fs, date);
+	fs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	while (getline(fs, date, ',') && getline(fs, value))
 	{
 		if (isDateValide(date))
@@ -92,7 +92,7 @@ bool	BitcoinExchange::isDateValide(const std::string &str)
 		return (1);
 	if (validateDate(year, month, day))
 		return (1);
-	std::cout << year << " " << month << " " << day << std::endl;
+	//std::cout << year << " " << month << " " << day << std::endl;
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:22:39 by votre_login       #+#    #+#             */
-/*   Updated: 2026/01/28 18:30:56 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/01 23:48:23 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ class BitcoinExchange
 		BitcoinExchange(const BitcoinExchange &src);
 		BitcoinExchange &operator=(const BitcoinExchange &src);
 		~BitcoinExchange();
+
+		static bool	isDateValide(const std::string &str);
 	private:
 		std::map<std::string, float>	_exchange;
 
 		bool		read_csv(std::ifstream &fs);
-		static bool	isDateValide(const std::string &str);
 		static bool	extractDate(const std::string &str, int &year, int &mouth, int &day);
 		static bool	validateDate(int &year, int &month, int &day);
 };
