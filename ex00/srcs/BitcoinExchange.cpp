@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/01 23:54:00 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 00:08:08 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include "../include/color.hpp"
@@ -62,18 +63,14 @@ BitcoinExchange::~BitcoinExchange()
 
 bool	BitcoinExchange::read_csv(std::ifstream &fs)
 {
-	std::string	date;
-	std::string	value;
+	std::string	date, value;
 
 	errno = 0;
 	fs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	while (getline(fs, date, ',') && getline(fs, value))
 	{
 		if (isDateValide(date))
-		{
-			std::cout << "Invalid date format" << std::endl;
 			return (1);
-		}
 		this->_exchange[date] = std::strtof(value.c_str(), NULL);
 		if (errno)
 		{
@@ -89,7 +86,10 @@ bool	BitcoinExchange::isDateValide(const std::string &str)
 	int					year, month, day;
 
 	if (extractDate(str, year, month, day))
+	{
+		std::cout << "Invalid date format" << std::endl;
 		return (1);
+	}
 	if (validateDate(year, month, day))
 		return (1);
 	//std::cout << year << " " << month << " " << day << std::endl;
@@ -112,11 +112,20 @@ bool	BitcoinExchange::extractDate(const std::string &str, int &year, int &month,
 bool	BitcoinExchange::validateDate(int &year, int &month, int &day)
 {
 	if (year < MIN_YEAR || year > MAX_YEAR)
+	{
+		std::cout << C_RED << "the year is outside the limits" << RESET << std::endl;
 		return (1);
+	}
 	if (month < 1 || month > 12)
+	{
+		std::cout << C_RED << "the month is outside the limits" << RESET << std::endl;
 		return (1);
+	}
 	if (day < 1 || day > 31)
+	{
+		std::cout << C_RED << "the day is outside the limits" << RESET << std::endl;
 		return (1);
+	}
 	return (0);
 }
 

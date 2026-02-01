@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/01 23:54:19 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 00:18:42 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "../include/color.hpp"
 
 void	analyses_exchanges(const char *str);
+bool	checkAndRemoveSpaces(std::string &date, std::string &value);
 
 int	main(int ac, char **av)
 {
@@ -41,6 +42,7 @@ int	main(int ac, char **av)
 
 void	analyses_exchanges(const char *str)
 {
+	std::string date, value;
 	std::ifstream	fs;
 
 	fs.open(str);
@@ -50,5 +52,18 @@ void	analyses_exchanges(const char *str)
 		return ;
 	}
 	fs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	
+	while (getline(fs, date, '|') && getline(fs, value))
+	{
+		if (checkAndRemoveSpaces(date, value))
+			return ;
+		if (!BitcoinExchange::isDateValide(date))
+			return ;
+		std::cout << date << std::endl;
+	}
+}
+
+bool	checkAndRemoveSpaces(std::string &date, std::string &value)
+{
+	//TODO: check the spaces postion places like the subjects and removes them.
+	return (0);
 }
