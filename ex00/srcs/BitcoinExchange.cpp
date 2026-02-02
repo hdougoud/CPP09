@@ -6,11 +6,12 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 00:08:08 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 16:31:47 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/BitcoinExchange.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <errno.h>
@@ -74,7 +75,7 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 		this->_exchange[date] = std::strtof(value.c_str(), NULL);
 		if (errno)
 		{
-			std::cout << "Invalid ammount format" << errno << std::endl;
+			std::cout << C_RED << "Invalid ammount format" << RESET << errno << std::endl;
 			return (1);
 		}
 	}
@@ -87,12 +88,11 @@ bool	BitcoinExchange::isDateValide(const std::string &str)
 
 	if (extractDate(str, year, month, day))
 	{
-		std::cout << "Invalid date format" << std::endl;
+		std::cout << C_RED << "Invalid date format" << RESET << std::endl;
 		return (1);
 	}
 	if (validateDate(year, month, day))
 		return (1);
-	//std::cout << year << " " << month << " " << day << std::endl;
 	return (0);
 }
 
@@ -129,3 +129,12 @@ bool	BitcoinExchange::validateDate(int &year, int &month, int &day)
 	return (0);
 }
 
+void	BitcoinExchange::correspondenceSearch(const std::string &date, const float value) const
+{
+	std::map<std::string, float>::const_iterator it;
+
+	it = this->_exchange.lower_bound(date);
+	if (it->first != date)
+		it--;
+	std::cout << C_BLUE << date << " => " << value << " = " << it->second * value << RESET << std::endl;
+}

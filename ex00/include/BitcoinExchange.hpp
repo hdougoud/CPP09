@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:22:39 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/01 23:48:23 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 16:22:48 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class BitcoinExchange
 		~BitcoinExchange();
 
 		static bool	isDateValide(const std::string &str);
+		void		correspondenceSearch(const std::string &date, const float value) const;
 	private:
 		std::map<std::string, float>	_exchange;
 
