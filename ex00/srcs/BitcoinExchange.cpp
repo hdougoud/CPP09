@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 22:27:21 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 22:33:32 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	BitcoinExchange::isDateValide(const std::string &str)
 	int					year, month, day;
 
 	extractDate(str, year, month, day);
-	validateDate(year, month, day);
+	checkDateComponents(year, month, day);
 }
 
 void	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
@@ -105,19 +105,14 @@ void	BitcoinExchange::extractDate(const std::string &str, int &year, int &month,
 	}
 }
 
-void	BitcoinExchange::validateDate(const int year, const int month, const int day)
+void	BitcoinExchange::checkDateComponents(const int year, const int month, const int day)
 {
+	int maxDay;
+
 	if (year < MIN_YEAR || year > MAX_YEAR)
 		throw std::out_of_range("The year is outside the limits");
 	if (month < 1 || month > 12)
 		throw std::out_of_range("The month is outside the limits");
-	checkMonthLength(year, month, day);
-}
-
-void	BitcoinExchange::checkMonthLength(const int year, const int month, const int day)
-{
-	int maxDay;
-
 	if (month == 2)
 		maxDay = (isLeapYear(year)) ? 29 : 28;
 	else if (month == 4 || month == 6 || month == 9 || month == 11)
