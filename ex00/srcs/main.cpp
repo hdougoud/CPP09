@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 22:04:34 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 22:28:51 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,8 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 			BitcoinExchange::isDateValide(date);
 			be.correspondenceSearch(date, value);
 		}
-		catch (std::invalid_argument &e) {
-			std::cerr << C_RED << e.what() << RESET << std::endl;
-		}
-		catch (std::out_of_range &e) {
-			std::cerr << C_RED << e.what() << RESET << std::endl;
+		catch (std::exception &e) {
+			std::cout << C_RED << e.what() << RESET << std::endl;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 22:04:34 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 22:27:21 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
@@ -89,6 +90,8 @@ void	BitcoinExchange::extractDate(const std::string &str, int &year, int &month,
 	std::string			errorLine;
 	std::stringstream	ss(str);
 
+	if (str.length() != 10)
+		throw std::length_error("Error: date does not have 10 characters");
 	ss >> year >> dash1 >> month >> dash2 >> day;
 	if (ss.fail() || !ss.eof())
 	{
@@ -139,10 +142,16 @@ bool	BitcoinExchange::isLeapYear(const int year)
 
 void	BitcoinExchange::correspondenceSearch(const std::string &date, const float value) const
 {
-	std::map<std::string, float>::const_iterator it;
+	std::map<std::string, float>::const_iterator	it;
+	std::string										errorLine;
 
 	it = this->_exchange.lower_bound(date);
-	if (it->first != date)
+	if (date < this->_exchange.begin()->first)
+	{
+		errorLine = "Error: the date \"" + date + "\" is smaller than the first entry in the CSV file";
+		throw std::runtime_error(errorLine);
+	}
+	if ((it->first != date) && (this->_exchange.begin() != it))
 		it--;
 	std::cout << C_BLUE << date << " => " << value << " = " << it->second * value << RESET << std::endl;
 }
