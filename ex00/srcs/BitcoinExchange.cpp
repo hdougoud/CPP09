@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 21:39:34 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 22:04:34 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,14 @@ BitcoinExchange::BitcoinExchange()
 BitcoinExchange::BitcoinExchange(const std::string &filename)
 {
 	std::ifstream	fs;
-
-	//TODO:check .csv extention
+	
+	if (filename.find(".csv", filename.length()-4) == std::string::npos)
+		throw std::invalid_argument("Error: bad file extension");
 	fs.open(filename.c_str());
 	if (!fs.is_open())
-		throw (std::runtime_error("Error cannot open the file"));
+		throw (std::runtime_error("Error: cannot open the file"));
 	if (fs.eof())
-		throw (std::runtime_error("Error files is empty"));
+		throw (std::runtime_error("Error: files is empty"));
 	read_csv(fs);
 }
 
@@ -82,26 +83,23 @@ void	BitcoinExchange::isDateValide(const std::string &str)
 	validateDate(year, month, day);
 }
 
-void	BitcoinExchange::correspondenceSearch(const std::string &date, const float value) const
-{
-	std::map<std::string, float>::const_iterator it;
-
-	it = this->_exchange.lower_bound(date);
-	if (it->first != date)
-		it--;
-	std::cout << C_BLUE << date << " => " << value << " = " << it->second * value << RESET << std::endl;
-}
-
 void	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
 {
 	char				dash1, dash2;
+	std::string			errorLine;
 	std::stringstream	ss(str);
 
 	ss >> year >> dash1 >> month >> dash2 >> day;
 	if (ss.fail() || !ss.eof())
+	{
+		errorLine = "bad input " + str;
 		throw std::invalid_argument("bad input");
+	}
 	if (dash1 != '-' || dash2 != '-')
+	{
+		errorLine = "bad input " + str;
 		throw std::invalid_argument("bad input");
+	}
 }
 
 void	BitcoinExchange::validateDate(const int year, const int month, const int day)
@@ -136,5 +134,16 @@ bool	BitcoinExchange::isLeapYear(const int year)
 	if (year % 4 == 0)
 		return (true);
 	return (false);
+}
+
+
+void	BitcoinExchange::correspondenceSearch(const std::string &date, const float value) const
+{
+	std::map<std::string, float>::const_iterator it;
+
+	it = this->_exchange.lower_bound(date);
+	if (it->first != date)
+		it--;
+	std::cout << C_BLUE << date << " => " << value << " = " << it->second * value << RESET << std::endl;
 }
 
