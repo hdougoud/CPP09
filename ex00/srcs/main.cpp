@@ -6,20 +6,22 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 20:40:53 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 21:37:39 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <stdlib.h>
 #include "../include/BitcoinExchange.hpp"
 #include "../include/color.hpp"
 
 void	analyses_exchanges(const char *str, BitcoinExchange &be);
-bool	extactDateAndValue(std::string &line, std::string &date, float &value);
+void	extractDateAndValue(std::string &line, std::string &date, float &value);
 
 int	main(int ac, char **av)
 {
@@ -34,9 +36,8 @@ int	main(int ac, char **av)
 		BitcoinExchange	be("data.csv");
 		analyses_exchanges(av[1], be);
 	}
-	catch (std::runtime_error &e) {
+	catch (std::exception &e) {
 		std::cout << C_RED << e.what() << RESET << std::endl;
-		return (1);
 	}
 	return (0);
 }
@@ -57,40 +58,44 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 
 	while (getline(fs, line))
 	{
-		if (!extactDateAndValue(line, date, value))
-			continue ;
-		if (!BitcoinExchange::isDateValide(date))
-			continue ;
-		be.correspondenceSearch(date, value);
+		try{
+			extractDateAndValue(line, date, value);
+			BitcoinExchange::isDateValide(date);
+			be.correspondenceSearch(date, value);
+		}
+		catch (std::invalid_argument &e) {
+			std::cerr << C_RED << e.what() << RESET << std::endl;
+		}
+		catch (std::out_of_range &e) {
+			std::cerr << C_RED << e.what() << RESET << std::endl;
+		}
 	}
 }
 
-bool	extactDateAndValue(std::string &line, std::string &date, float &value)
+void	extractDateAndValue(std::string &line, std::string &date, float &value)
 {
-	size_t	separator;
+	size_t		separator;
+	std::string	errorLine;
 
 	errno = 0;
 	if ((separator = line.find(" | ")) == std::string::npos)
 	{
-		std::cout << C_RED << "Error: bad input => " << line << RESET << std::endl;
-		return (1);
+		errorLine = "Error: bad input => " + line;
+		throw std::invalid_argument(errorLine);
 	}
 	date = line.substr(0, separator);
 	value = strtof(line.substr(separator + 3).c_str(), NULL);
 	if (errno)
 	{
-		std::cout << C_RED << "Error: bad input => " << line << RESET << std::endl;
-		return (false);
+		errorLine = "Error: bad input => " + line;
+		throw std::invalid_argument(errorLine);
 	}
 	if (value < 0)
 	{
-		std::cout << C_RED << "Error: not a positive number." << RESET << std::endl;
-		return (false);
+		throw std::invalid_argument("Error: not a positive number.");
 	}
 	if (value > 1000)
 	{
-		std::cout << C_RED << "Error: too large a number." << RESET << std::endl;
-		return (false);
+		throw std::invalid_argument("Error: too large a number.");
 	}
-	return (true);
 }
