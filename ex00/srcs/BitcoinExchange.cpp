@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 16:31:47 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 21:02:25 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ BitcoinExchange::BitcoinExchange(const std::string &filename)
 		throw (std::runtime_error("Error cannot open the file"));
 	if (fs.eof())
 		throw (std::runtime_error("Error files is empty"));
-	if	(read_csv(fs))
+	if	(!read_csv(fs))
 		throw (std::runtime_error("Error bad argument in file"));
 }
 
@@ -70,63 +70,30 @@ bool	BitcoinExchange::read_csv(std::ifstream &fs)
 	fs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	while (getline(fs, date, ',') && getline(fs, value))
 	{
-		if (isDateValide(date))
-			return (1);
+		if (!isDateValide(date))
+			return (false);
 		this->_exchange[date] = std::strtof(value.c_str(), NULL);
 		if (errno)
 		{
 			std::cout << C_RED << "Invalid ammount format" << RESET << errno << std::endl;
-			return (1);
+			return (false);
 		}
 	}
-	return (0);
+	return (true);
 }
 
 bool	BitcoinExchange::isDateValide(const std::string &str)
 {
 	int					year, month, day;
 
-	if (extractDate(str, year, month, day))
+	if (!extractDate(str, year, month, day))
 	{
 		std::cout << C_RED << "Invalid date format" << RESET << std::endl;
-		return (1);
+		return (false);
 	}
-	if (validateDate(year, month, day))
-		return (1);
-	return (0);
-}
-
-bool	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
-{
-	char				dash1, dash2;
-	std::stringstream	ss(str);
-
-	ss >> year >> dash1 >> month >> dash2 >> day;
-	if (ss.fail() || !ss.eof())
-		return (1);
-	if (dash1 != '-' || dash2 != '-')
-		return (1);
-	return (0);
-}
-
-bool	BitcoinExchange::validateDate(int &year, int &month, int &day)
-{
-	if (year < MIN_YEAR || year > MAX_YEAR)
-	{
-		std::cout << C_RED << "the year is outside the limits" << RESET << std::endl;
-		return (1);
-	}
-	if (month < 1 || month > 12)
-	{
-		std::cout << C_RED << "the month is outside the limits" << RESET << std::endl;
-		return (1);
-	}
-	if (day < 1 || day > 31)
-	{
-		std::cout << C_RED << "the day is outside the limits" << RESET << std::endl;
-		return (1);
-	}
-	return (0);
+	if (!validateDate(year, month, day))
+		return (false);
+	return (true);
 }
 
 void	BitcoinExchange::correspondenceSearch(const std::string &date, const float value) const
@@ -138,3 +105,63 @@ void	BitcoinExchange::correspondenceSearch(const std::string &date, const float 
 		it--;
 	std::cout << C_BLUE << date << " => " << value << " = " << it->second * value << RESET << std::endl;
 }
+
+bool	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
+{
+	char				dash1, dash2;
+	std::stringstream	ss(str);
+
+	ss >> year >> dash1 >> month >> dash2 >> day;
+	if (ss.fail() || !ss.eof())
+		return (false);
+	if (dash1 != '-' || dash2 != '-')
+		return (false);
+	return (true);
+}
+
+bool	BitcoinExchange::validateDate(const int year, const int month, const int day)
+{
+	if (year < MIN_YEAR || year > MAX_YEAR)
+	{
+		std::cout << C_RED << "the year is outside the limits" << RESET << std::endl;
+		return (false);
+	}
+	if (month < 1 || month > 12)
+	{
+		std::cout << C_RED << "the month is outside the limits" << RESET << std::endl;
+		return (false);
+	}
+	if (!checkMonthLength(year, month, day))
+	{
+		std::cout << C_RED << "the day is outside the limits" << RESET << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
+bool	BitcoinExchange::checkMonthLength(const int year, const int month, const int day)
+{
+	int maxDay;
+
+	if (month == 2)
+		maxDay = (isLeapYear(year)) ? 29 : 28;
+	else if (month == 4 || month == 6 || month == 9 || month == 11)
+		maxDay = 30;
+	else
+		maxDay = 31;
+	if (day < 1 || day > maxDay)
+		return (false);
+	return (true);
+}
+
+bool	BitcoinExchange::isLeapYear(const int year)
+{
+	if (year % 400 == 0)
+		return (true);
+	if (year % 100 == 0)
+		return (false);
+	if (year % 4 == 0)
+		return (true);
+	return (false);
+}
+

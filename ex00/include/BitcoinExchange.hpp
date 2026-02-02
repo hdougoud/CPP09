@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:22:39 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 16:22:48 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 19:26:06 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,7 @@ class BitcoinExchange
 
 		bool		read_csv(std::ifstream &fs);
 		static bool	extractDate(const std::string &str, int &year, int &mouth, int &day);
-		static bool	validateDate(int &year, int &month, int &day);
+		static bool	validateDate(const int year, const int month, const int day);
+		static bool	checkMonthLength(const int year, const int month, const int day);
+		static bool	isLeapYear(const int year);
 };

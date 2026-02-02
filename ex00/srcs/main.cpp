@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 16:23:18 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/02 20:40:53 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 
 	while (getline(fs, line))
 	{
-		if (extactDateAndValue(line, date, value))
+		if (!extactDateAndValue(line, date, value))
 			continue ;
-		if (BitcoinExchange::isDateValide(date))
-			return ;
+		if (!BitcoinExchange::isDateValide(date))
+			continue ;
 		be.correspondenceSearch(date, value);
 	}
 }
@@ -80,17 +80,17 @@ bool	extactDateAndValue(std::string &line, std::string &date, float &value)
 	if (errno)
 	{
 		std::cout << C_RED << "Error: bad input => " << line << RESET << std::endl;
-		return (1);
+		return (false);
 	}
 	if (value < 0)
 	{
 		std::cout << C_RED << "Error: not a positive number." << RESET << std::endl;
-		return (1);
+		return (false);
 	}
 	if (value > 1000)
 	{
 		std::cout << C_RED << "Error: too large a number." << RESET << std::endl;
-		return (1);
+		return (false);
 	}
-	return (0);
+	return (true);
 }
