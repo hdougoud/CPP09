@@ -6,18 +6,16 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 22:33:32 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/03 09:06:49 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/BitcoinExchange.hpp"
-#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <errno.h>
 #include <fstream>
 #include <iostream>
-#include <iterator>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
@@ -63,6 +61,7 @@ BitcoinExchange::~BitcoinExchange()
 
 void	BitcoinExchange::read_csv(std::ifstream &fs)
 {
+	char		*endptr;
 	std::string	date, value;
 
 	errno = 0;
@@ -70,8 +69,8 @@ void	BitcoinExchange::read_csv(std::ifstream &fs)
 	while (getline(fs, date, ',') && getline(fs, value))
 	{
 		isDateValide(date);
-		this->_exchange[date] = std::strtof(value.c_str(), NULL);
-		if (errno)
+		this->_exchange[date] = std::strtof(value.c_str(), &endptr);
+		if (errno || *endptr)
 			throw std::invalid_argument("invalid exchange_rate format");
 	}
 }
@@ -87,22 +86,15 @@ void	BitcoinExchange::isDateValide(const std::string &str)
 void	BitcoinExchange::extractDate(const std::string &str, int &year, int &month, int &day)
 {
 	char				dash1, dash2;
-	std::string			errorLine;
 	std::stringstream	ss(str);
 
 	if (str.length() != 10)
 		throw std::length_error("Error: date does not have 10 characters");
 	ss >> year >> dash1 >> month >> dash2 >> day;
 	if (ss.fail() || !ss.eof())
-	{
-		errorLine = "bad input " + str;
-		throw std::invalid_argument("bad input");
-	}
+		throw std::invalid_argument("Error: bad input");
 	if (dash1 != '-' || dash2 != '-')
-	{
-		errorLine = "bad input " + str;
-		throw std::invalid_argument("bad input");
-	}
+		throw std::invalid_argument("Error: bad input");
 }
 
 void	BitcoinExchange::checkDateComponents(const int year, const int month, const int day)
@@ -112,7 +104,7 @@ void	BitcoinExchange::checkDateComponents(const int year, const int month, const
 	if (year < MIN_YEAR || year > MAX_YEAR)
 		throw std::out_of_range("The year is outside the limits");
 	if (month < 1 || month > 12)
-		throw std::out_of_range("The month is outside the limits");
+		throw std::out_of_range("Error: the month is outside the limits");
 	if (month == 2)
 		maxDay = (isLeapYear(year)) ? 29 : 28;
 	else if (month == 4 || month == 6 || month == 9 || month == 11)
@@ -120,7 +112,7 @@ void	BitcoinExchange::checkDateComponents(const int year, const int month, const
 	else
 		maxDay = 31;
 	if (day < 1 || day > maxDay)
-		throw std::out_of_range("The month is outside the limits");
+		throw std::out_of_range("Error: the day is outside the limits");
 }
 
 bool	BitcoinExchange::isLeapYear(const int year)

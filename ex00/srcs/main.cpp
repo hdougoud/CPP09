@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/02 22:28:51 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/03 09:05:46 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 			BitcoinExchange::isDateValide(date);
 			be.correspondenceSearch(date, value);
 		}
+		catch (std::invalid_argument &e) {
+			std::cout << C_RED << "Error: bad input " << line << RESET << std::endl;
+		}
 		catch (std::exception &e) {
 			std::cout << C_RED << e.what() << RESET << std::endl;
 		}
@@ -71,6 +74,7 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 
 void	extractDateAndValue(std::string &line, std::string &date, float &value)
 {
+	char		*endptr;
 	size_t		separator;
 	std::string	errorLine;
 
@@ -81,17 +85,17 @@ void	extractDateAndValue(std::string &line, std::string &date, float &value)
 		throw std::invalid_argument(errorLine);
 	}
 	date = line.substr(0, separator);
-	value = strtof(line.substr(separator + 3).c_str(), NULL);
-	if (errno)
+	value = strtof(line.substr(separator + 3).c_str(), &endptr);
+	if (errno || *endptr)
 	{
 		errorLine = "Error: bad input => " + line;
 		throw std::invalid_argument(errorLine);
 	}
-	if (value < 0)
+	else if (value < 0)
 	{
 		throw std::invalid_argument("Error: not a positive number.");
 	}
-	if (value > 1000)
+	else if (value > 1000)
 	{
 		throw std::invalid_argument("Error: too large a number.");
 	}
