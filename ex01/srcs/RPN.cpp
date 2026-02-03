@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:10 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/03 13:42:01 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/02/03 16:57:34 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,30 +38,10 @@ RPN::~RPN()
 	return ;
 }
 
-int	RPN::calculates(char *input)
+int	RPN::calculates(std::stringstream &ss)
 {
-	std::stack<int>	rpn;
-	std::string		errorMsg;
-	int				result = 0;
 
-	while (*input)
-	{
-		while (std::isspace(*input))
-			input++;
-		if (!std::isdigit(*input) && !RPN::isOperator(*input))
-		{
-			errorMsg = "Error: Illegal argument exception ";
-			throw std::invalid_argument(errorMsg += *input);
-		}
-		input++;
-		if (*input && !std::isspace(*input))
-		{
-			errorMsg = "Error: Illegal argument exception ";
-			throw std::invalid_argument(errorMsg += *input);
-		}
-		input++;
-	}
-	return (result);
+
 }
 
 bool	RPN::isOperator(char c)
