@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/03 09:05:46 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/02/03 09:49:58 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int ac, char **av)
 		analyses_exchanges(av[1], be);
 	}
 	catch (std::exception &e) {
-		std::cout << C_RED << e.what() << RESET << std::endl;
+		std::cerr << C_RED << e.what() << RESET << std::endl;
 	}
 	return (0);
 }
@@ -45,14 +45,14 @@ int	main(int ac, char **av)
 void	analyses_exchanges(const char *str, BitcoinExchange &be)
 {
 	float			value;
-	std::string		line, date;
+	std::string		line, date, errorLine;
 	std::ifstream	fs;
 
 	fs.open(str);
 	if (fs.fail())
 	{
-		std::cout << C_RED << "impossible to open file \"" << str << "\"" << RESET << std::endl;
-		return ;
+		errorLine = "impossible to open file \"" + std::string(str) + "\"";
+		throw std::runtime_error(errorLine);
 	}
 	fs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -64,10 +64,10 @@ void	analyses_exchanges(const char *str, BitcoinExchange &be)
 			be.correspondenceSearch(date, value);
 		}
 		catch (std::invalid_argument &e) {
-			std::cout << C_RED << "Error: bad input " << line << RESET << std::endl;
+			std::cerr << C_RED << "Error: bad input " << line << RESET << std::endl;
 		}
 		catch (std::exception &e) {
-			std::cout << C_RED << e.what() << RESET << std::endl;
+			std::cerr << C_RED << e.what() << RESET << std::endl;
 		}
 	}
 }

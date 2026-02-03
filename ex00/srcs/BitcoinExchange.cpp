@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/25 19:21:20 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/03 09:06:49 by hdougoud         ###   ########.fr       */
+/*   Updated: 2026/02/03 09:48:14 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 BitcoinExchange::BitcoinExchange()
 {
-	return ;
+	throw std::runtime_error("No data file has been provided");
 }
 
 BitcoinExchange::BitcoinExchange(const std::string &filename)
