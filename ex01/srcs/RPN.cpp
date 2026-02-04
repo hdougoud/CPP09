@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:10 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/04 21:54:06 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/04 22:01:19 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,40 +104,4 @@ bool	RPN::isOperator(char c)
 {
 	return (c == '+' || c == '-' || c == '*' || c == '/');
 }
-
-// int	RPN::calculates(char *str)
-// {
-// 	int					nb1, nb2;
-// 	std::stack<int>		stack;
-// 	std::string			errorMsg;
-//
-// 	while (*str)
-// 	{
-// 		if (std::isdigit(*str))
-// 			stack.push(*str - '0');
-// 		else if (isOperator(*str))
-// 		{
-// 			if (stack.size() < 2)
-// 				throw std::invalid_argument("Error: the calculation is impossible");
-// 			if (*str == '+')
-// 			{
-// 				nb1 = stack.top();
-// 				stack.pop();
-// 				nb2 = stack.top();
-// 				stack.pop();
-// 				stack.push(nb1 + nb2);
-// 			}
-// 		}
-// 		else
-// 			throw std::invalid_argument(std::string("Error: illegal argument ") += *str);
-// 		str++;
-// 		if (!*str)
-// 			return (stack.top());
-// 		if (!std::isspace(*str))
-// 			throw std::invalid_argument("Error: each element must be separated by a space");
-// 		str++;
-// 	}
-// 	return (stack.top());
-// }
-
 

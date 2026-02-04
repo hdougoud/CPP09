@@ -6,17 +6,17 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/20 21:04:15 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/04 11:37:51 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/04 22:02:07 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <exception>
 #include <iostream>
 #include "../include/color.hpp"
 #include "../include/RPN.hpp"
 
 int main(int ac, char **av)
 {
-	(void) av;
 	if (ac != 2)
 	{
 		std::cout << C_YELLOW \
@@ -27,7 +27,7 @@ int main(int ac, char **av)
 	try {
 		std::cout << C_BLUE << RPN::calculates(av[1])  << RESET << std::endl;
 	}
-	catch (const std::invalid_argument &e) {
+	catch (const std::exception &e) {
 		std::cerr << C_RED << e.what() << RESET << std::endl;
 	}
 	return (0);
