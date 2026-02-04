@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:10 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/04 21:47:49 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/04 21:52:48 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ int	RPN::calculates(char *str)
 			continue;
 		}
 		if (!isOperator(arg))
-			throw std::invalid_argument("Error: illegal argument\nuse only numbers and the operators + - * /");
+			throw std::invalid_argument("Error: illegal argument\nUse only numbers and the operators + - * /");
 		stack.push(executeOperation(arg, stack));
 	}
 	if (stack.size() != 1)
-		throw std::invalid_argument("Error: the calculation is impossible\nthere is more than one number in the stack");
+		throw std::invalid_argument("Error: the calculation is impossible\nThere is more than one number in the stack");
 	return stack.top();
 }
 
