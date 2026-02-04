@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:10 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/04 21:52:48 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/04 21:54:06 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include <stack>
 #include <stdexcept>
 #include <sstream>
-#include <iostream>
-#include "../include/color.hpp"
 
 RPN::RPN()
 {
