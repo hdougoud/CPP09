@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:10 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/04 22:01:19 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/05 17:16:07 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ RPN::~RPN()
 	return ;
 }
 
-int	RPN::calculates(char *str)
+float	RPN::calculates(char *str)
 {
 	char				arg;
 	std::stringstream	ss(str);
-	std::stack<int>		stack;
+	std::stack<float>	stack;
 
 	while (ss >> arg)
 	{
@@ -63,13 +63,13 @@ int	RPN::calculates(char *str)
 	return stack.top();
 }
 
-int	RPN::executeOperation(char op, std::stack<int> &st)
+float	RPN::executeOperation(char op, std::stack<float> &st)
 {
-	int		first, second;
-	long	result;
+	float	first, second;
+	double	result;
 
 	if (st.size() < 2)
-		throw std::invalid_argument("Error: the calculation is impossible");
+		throw std::invalid_argument("Error: the calculation is impossible\nCheck your input");
 	first = removeAndGetTopValue(st);
 	second = removeAndGetTopValue(st);
 	switch (op)
@@ -86,14 +86,14 @@ int	RPN::executeOperation(char op, std::stack<int> &st)
 		case'/':
 			result = second / first;
 	}
-	if (result < std::numeric_limits<int>::min() || result > std::numeric_limits<int>::max())
+	if (result < std::numeric_limits<float>::min() || result > std::numeric_limits<float>::max())
 		throw std::runtime_error("Error: result outside de numerical limits");
-	return ( static_cast<int>(result));
+	return (static_cast<float>(result));
 }
 
-int	RPN::removeAndGetTopValue(std::stack<int> &st)
+float	RPN::removeAndGetTopValue(std::stack<float> &st)
 {
-	int value;
+	float value;
 
 	value = st.top();
 	st.pop();
