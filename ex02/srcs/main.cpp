@@ -6,13 +6,14 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 22:07:59 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/07 03:11:44 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/07 04:47:06 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <exception>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 #include "../include/color.hpp"
 #include "../include/PmergeMe.hpp"
@@ -25,7 +26,7 @@ int main(int ac, char **av)
 
 	try{
 		checkInput(ac, av, input);
-		PmergeMe<std::vector<int> > pm(input);
+		PmergeMe<std::vector<std::pair<int, int> > > pm(input);
 	}
 	catch (std::exception &e) {
 		std::cerr << C_RED << e.what() << RESET << std::endl;
