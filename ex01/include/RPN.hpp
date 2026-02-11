@@ -6,7 +6,7 @@
 /*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 09:11:14 by hdougoud          #+#    #+#             */
-/*   Updated: 2026/02/04 20:26:09 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/05 17:04:39 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@
 class RPN
 {
 	public:
-		static int	calculates(char *);
+		static float	calculates(char *);
 	private:
 		RPN();
 		RPN(const RPN &src);
 		RPN &operator=(const RPN &src);
 		~RPN();
 
-		static int	executeOperation(char op, std::stack<int> &st);
-		static int	removeAndGetTopValue(std::stack<int> &st);
-		static bool	isOperator(char c);
+		static float	executeOperation(char op, std::stack<float> &st);
+		static float	removeAndGetTopValue(std::stack<float> &st);
+		static bool		isOperator(char c);
 };
