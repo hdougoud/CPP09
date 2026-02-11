@@ -6,12 +6,13 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/07 05:24:40 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/11 22:02:42 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/PmergeMe.hpp"
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -28,9 +29,7 @@ PmergeMe<C>::PmergeMe(const std::string &str)
 {
 	std::vector<int>		temp;
 
-	convertInput(str, temp);
-	this->makePairs(temp);
-	std::cout << this->_container.size() << std::endl;
+	convertInput(str);
 	this->printContainer();
 }
 
@@ -57,6 +56,23 @@ PmergeMe<C>::~PmergeMe()
 }
 
 template <typename C>
+void	PmergeMe<C>::convertInput(const std::string &str)
+{
+	int					converted;
+	std::stringstream	ss(str);
+
+	while (ss >> converted)
+	{
+		//WARN: INT MAX AND INT MIN Dosen't work fix this later !!
+		if (converted < 0 || converted >> std::numeric_limits<int>::max())
+			throw std::invalid_argument("Error: use only positives numbers");
+		this->_container.push_back(converted);
+	}
+	if (!ss.eof() && ss.fail())
+		throw std::invalid_argument("Error: use only numbers");
+}
+
+template <typename C>
 void	PmergeMe<C>::makePairs(const std::vector<int> &temp)
 {
 	std::pair<int, int>							pair;
@@ -80,22 +96,6 @@ void	PmergeMe<C>::printContainer(void) const
 	typename C::const_iterator it;
 
 	for (it = this->_container.begin(); it != this->_container.end(); it++)
-		std::cout << C_BLUE << "first: " << it->first << " | second:  " << it->second << RESET << std::endl;
-}
-
-template <typename C>
-void	PmergeMe<C>::convertInput(const std::string &str, std::vector<int> &temp)
-{
-	int					converted;
-	std::stringstream	ss(str);
-
-	while (ss >> converted)
-	{
-		if (converted < 0)
-			throw std::invalid_argument("Error: use only positives numbers");
-		temp.push_back(converted);
-	}
-	if (!ss.eof())
-		throw std::invalid_argument("Error: use only numbers");
+		std::cout << C_BLUE << *it << RESET << std::endl;
 }
 

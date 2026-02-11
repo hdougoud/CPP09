@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 22:07:10 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/07 05:15:57 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/07 07:52:08 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ class PmergeMe
 	private:
 		C	_container;
 
+		void		convertInput(const std::string &str);
 		void		makePairs(const std::vector<int> &temp);
 		void		printContainer(void) const;
-		static void	convertInput(const std::string &str, std::vector<int> &temp);
 };
 
 #include "../srcs/PmergeMe.tpp"
