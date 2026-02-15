@@ -6,14 +6,13 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 22:07:59 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/07 07:50:20 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/14 07:10:16 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <exception>
 #include <iostream>
 #include <stdexcept>
-#include <utility>
 #include <vector>
 #include "../include/color.hpp"
 #include "../include/PmergeMe.hpp"
@@ -27,6 +26,7 @@ int main(int ac, char **av)
 	try{
 		checkInput(ac, av, input);
 		PmergeMe<std::vector<int> > pm(input);
+		pm.sort();
 	}
 	catch (std::exception &e) {
 		std::cerr << C_RED << e.what() << RESET << std::endl;
@@ -37,6 +37,7 @@ int main(int ac, char **av)
 
 void	checkInput(int ac, char **av, std::string &input)
 {
+	std::string errorMsg;
 
 	if (ac < 2)
 		throw std::invalid_argument("Please use at least one argument");
