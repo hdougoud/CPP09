@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/15 20:38:43 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/16 21:58:47 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,39 +77,78 @@ void	PmergeMe<C>::convertInput(const std::string &str)
 template <typename C>
 void	PmergeMe<C>::sort(void)
 {
-	//TODO: ADD TIMER
-	this->printSequence();
-	makePairs(this->_container);
-	this->printSequence();
 
+	//--------- DEBUG -----------------//
+	std::cout << C_CORAL << "Jacobsthal Suit Test\n"
+				<< PmergeMe<C>::calculateJacobsthal(1) << " "
+				<< PmergeMe<C>::calculateJacobsthal(2) << " "
+				<< PmergeMe<C>::calculateJacobsthal(3) << " "
+				<< PmergeMe<C>::calculateJacobsthal(4) << " "
+				<< PmergeMe<C>::calculateJacobsthal(5) << " "
+				<< PmergeMe<C>::calculateJacobsthal(6) << " "
+				<< PmergeMe<C>::calculateJacobsthal(7) << " "
+				<< PmergeMe<C>::calculateJacobsthal(8) << " \n" << std::endl;
+	//---------------------------------//
+
+	//TODO: ADD TIMER
+	std::cout << C_YELLOW << "INPUT\n";
+	this->printSequence();
+	makePairs(this->_container, 1);
 }
 
-template <typename C>
-void	PmergeMe<C>::makePairs(std::vector<int> &numbers)
-{
-	int									impaire;
-	std::vector<int>					next;
-	std::vector<std::pair<int, int> >	pairs;
-	std::vector<int>::iterator			it;
 
-	(void) impaire;
-	impaire = -1;
-	if (numbers.size() < 2)
-		return ;
-	for(it = numbers.begin(); it != numbers.end(); it++)
+template <typename C>
+void	PmergeMe<C>::makePairs(C &sequence, int size)
+{
+	C						main;
+	C						pend;
+	C						impaire;
+	typename C::iterator	it;
+
+	//TODO: Protect MAX input args
+	if (size * 2 > static_cast<int>(sequence.size()))
+		return;
+	for (it = sequence.begin(); std::distance(it, sequence.end()) >= size * 2; it += 2 * size)
 	{
-		if (std::distance(it, numbers.end()) < 2)
-		{
-			impaire = *it;
-			break;
-		}
-		if (*it > *(it + 1))
-			std::iter_swap(it, it + 1);
-		pairs.push_back(std::pair<int, int>(*it++, *it));
-		next.push_back(pairs.back().second);
+		if (*(it + size - 1) > *(it + size * 2 - 1))
+			std::swap_ranges(it, it + size, it + size);
 	}
-	PmergeMe<C>::printContainer(pairs);
-	makePairs(next);
+
+	//--------- DEBUG -----------------//
+	std::cout << C_RED << "Impaire\n";
+	if (std::distance(it, sequence.end()) >= size)
+		impaire.assign(it, it + size);
+	for (it = impaire.begin(); it != impaire.end(); it++)
+	{
+		std::cout << *it << " ";
+	}
+	std::endl(std::cout);
+	this->printSequence();
+	//---------------------------------//
+
+	makePairs(sequence, size * 2);
+	if (!impaire.empty())
+	{
+		for(it = impaire.begin(); it != impaire.end(); it++)
+			pend.push_back(*it);
+	}
+	for (it = sequence.begin(); std::distance(it, sequence.end()) >= size * 2 - 1; it++)
+		main.push_back(*it);
+	this->_container = main;
+
+	//--------- DEBUG -----------------//
+	std::cout << C_YELLOW << "\nThe main\n"; 
+	for (it = main.begin(); it != main.end(); it++)
+	{
+		std::cout << *it << " ";
+	}
+	std::cout << "\nThe pend\n";
+	for (it = pend.begin(); it != pend.end(); it++)
+	{
+		std::cout << *it << " ";
+	}
+	std::cout << RESET << std::endl;
+	//---------------------------------//
 
 }
 
@@ -124,27 +163,13 @@ void	PmergeMe<C>::printSequence(void) const
 }
 
 template <typename C>
-void	PmergeMe<C>::printContainer(const std::vector<std::pair<int, int> > &vec)
+unsigned int PmergeMe<C>::calculateJacobsthal(unsigned int n)
 {
-	std::vector<std::pair<int, int>		>::const_iterator it;
-
-	std::cout << C_YELLOW << "{\n";
-	for (it = vec.begin(); it != vec.end(); it++)
-		std::cout << C_BLUE << "    " << it->first << " " << it->second << RESET << "\n";
-	std::cout << C_YELLOW << "}\n";
-	std::endl(std::cout);
+	if (n == 0)
+		return (0);
+	if (n == 1)
+		return (1);
+	return PmergeMe<C>::calculateJacobsthal(n - 1) + 2 * PmergeMe<C>::calculateJacobsthal(n - 2);
 }
 
-template <typename C>
-void	PmergeMe<C>::sortPair(std::pair<int, int> &p)
-{
-	int	temp;
-
-	if (p.first > p.second)
-	{
-		temp = p.first;
-		p.first = p.second;
-		p.second = temp;
-	}
-}
 
