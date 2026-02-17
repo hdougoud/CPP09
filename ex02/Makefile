@@ -1,6 +1,6 @@
 NAME		= PmergeMe
 CXX			= g++
-CXXFLAGS	= -Wall -Werror -Wextra -std=c++98 -Iinclude
+CXXFLAGS	= -Wall -Werror -Wextra -std=c++98 -Iinclude -g
 
 BUILD_DIR	= build/
 SRCS_DIR	= srcs/

@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/16 21:58:47 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/17 14:58:33 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-#include <utility>
 #include <vector>
 #include "../include/color.hpp"
 
@@ -104,6 +103,7 @@ void	PmergeMe<C>::makePairs(C &sequence, int size)
 	C						pend;
 	C						impaire;
 	typename C::iterator	it;
+	typename C::iterator	blocEnd;
 
 	//TODO: Protect MAX input args
 	if (size * 2 > static_cast<int>(sequence.size()))
@@ -127,13 +127,26 @@ void	PmergeMe<C>::makePairs(C &sequence, int size)
 	//---------------------------------//
 
 	makePairs(sequence, size * 2);
+	blocEnd = sequence.begin() + size;
+	for (it = sequence.begin(); it < blocEnd; it++)
+		main.push_back(*it);
+	for (it = sequence.begin() + size; std::distance(it, sequence.end()) >= size;)
+	{
+		int i = 0;
+		while (i++ < size)
+			main.push_back(*it++);
+		i = 0;
+		while (i++ < size && std::distance(it, sequence.end()) >= size)
+			pend.push_back(*it++);
+	}
 	if (!impaire.empty())
 	{
 		for(it = impaire.begin(); it != impaire.end(); it++)
 			pend.push_back(*it);
 	}
-	for (it = sequence.begin(); std::distance(it, sequence.end()) >= size * 2 - 1; it++)
-		main.push_back(*it);
+
+	PmergeMe<C>::insertPend(main, pend, size);
+
 	this->_container = main;
 
 	//--------- DEBUG -----------------//
@@ -149,7 +162,6 @@ void	PmergeMe<C>::makePairs(C &sequence, int size)
 	}
 	std::cout << RESET << std::endl;
 	//---------------------------------//
-
 }
 
 template <typename C>
@@ -157,9 +169,34 @@ void	PmergeMe<C>::printSequence(void) const
 {
 	typename C::const_iterator it;
 
+	std::cout << C_YELLOW;
 	for (it = this->_container.begin(); it != this->_container.end(); it++)
-		std::cout << C_YELLOW << *it << " " << RESET;
-	std::endl(std::cout);
+		std::cout << *it << " ";
+	std::cout << RESET << std::endl;
+}
+
+template <typename C>
+void	PmergeMe<C>::insertPend(C &main, C &pend, int blocSize)
+{
+	int						jacobsthalNb;
+	int						pendBlocNb;
+	C						winnerList;
+	typename C::iterator	it;
+	typename C::iterator	low;
+	typename C::iterator	high;
+
+	(void) main;
+	(void) jacobsthalNb;
+	(void) pendBlocNb;
+	while (it + 1 != main.end())
+	{
+		winnerList.push_back(*it);
+		it += blocSize;
+	}
+
+	jacobsthalNb = PmergeMe<C>::calculateJacobsthal(3) - 1;
+	pendBlocNb = pend.size() / blocSize;
+	
 }
 
 template <typename C>
@@ -171,5 +208,3 @@ unsigned int PmergeMe<C>::calculateJacobsthal(unsigned int n)
 		return (1);
 	return PmergeMe<C>::calculateJacobsthal(n - 1) + 2 * PmergeMe<C>::calculateJacobsthal(n - 2);
 }
-
-
