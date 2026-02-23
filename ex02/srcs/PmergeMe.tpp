@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/23 00:15:37 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/23 14:50:15 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ PmergeMe<C>::PmergeMe()
 
 template <typename C>
 PmergeMe<C>::PmergeMe(const std::string &str)
+	: _container(0), _jacobsthalSuit(0), _elements(0), _us(0)
 {
-	std::vector<int>		temp;
-
 	convertInput(str);
 	if (this->_container.size() > static_cast<unsigned long>(std::numeric_limits<int>::max()))
 		throw std::invalid_argument("Error: Too much numbers");
@@ -39,7 +38,8 @@ PmergeMe<C>::PmergeMe(const std::string &str)
 }
 
 template <typename C>
-PmergeMe<C>::PmergeMe(const PmergeMe &src) : _container(src._container), _jacobsthalSuit(src._jacobsthalSuit)
+PmergeMe<C>::PmergeMe(const PmergeMe &src)
+	: _container(src._container), _jacobsthalSuit(src._jacobsthalSuit), _elements(src._elements), _us(src._us)
 {
 	return ;
 }
@@ -51,6 +51,8 @@ PmergeMe<C>	&PmergeMe<C>::operator=(const PmergeMe &src)
 	{
 		this->_container = src._container;
 		this->_jacobsthalSuit = src._jacobsthalSuit;
+		this->_elements = src._elements;
+		this->_us = src._us;
 	}
 	return (*this);
 }
@@ -62,6 +64,23 @@ PmergeMe<C>::~PmergeMe()
 }
 
 template <typename C>
+long	PmergeMe<C>::getUs(void) const
+{
+	return (this->_us);
+}
+
+template <typename C>
+void	PmergeMe<C>::printSequence(void)
+{
+	typename C::iterator	it;
+
+	std::cout << C_BLUE;
+	for(it = this->_container.begin(); it != this->_container.end(); it++)
+		std::cout << *it << " ";
+	std::cout << RESET << std::endl;
+}
+
+template <typename C>
 void	PmergeMe<C>::convertInput(const std::string &str)
 {
 	int					i = 0;
@@ -70,12 +89,14 @@ void	PmergeMe<C>::convertInput(const std::string &str)
 
 	while (ss >> converted)
 	{
-		//WARN: INT MAX AND INT MIN Dosen't work fix this later !!
-		if (converted < 0 || converted >> std::numeric_limits<int>::max())
+		if (converted < 0)
 			throw std::invalid_argument("Error: use only positives numbers");
-		if (i > 500000)
-			throw std::invalid_argument("Error: too many numbers to sort\nThis program cannot sort more than 500'000 numbers");
+		if (converted > std::numeric_limits<int>::max())
+			throw std::invalid_argument("Error: Arguments must not exceed the value of a max integer");
+		if (i++ > 50000)
+			throw std::invalid_argument("Error: too many numbers to sort\nThis program cannot sort more than 50'000 numbers");
 		this->_container.push_back(converted);
+		this->_elements++;
 	}
 	if (!ss.eof() && ss.fail())
 		throw std::invalid_argument("Error: use only numbers");
@@ -84,34 +105,32 @@ void	PmergeMe<C>::convertInput(const std::string &str)
 template <typename C>
 void	PmergeMe<C>::sort(void)
 {
-	unsigned long	us;
 	struct timeval	tStart;
 	struct timeval	tEnd;
 
 	//--------- DEBUG -----------------//
-	std::cout << C_CORAL << "Jacobsthal Suit Test\n";
-	for(typename C::iterator it = _jacobsthalSuit.begin(); it != _jacobsthalSuit.end(); it++)
-		std::cout << *it << " ";
-	std::cout << RESET << std::endl;
+	// std::cout << C_CORAL << "Jacobsthal Suit Test\n";
+	// for(typename C::iterator it = _jacobsthalSuit.begin(); it != _jacobsthalSuit.end(); it++)
+	// 	std::cout << *it << " ";
+	// std::cout << RESET << std::endl;
 	//---------------------------------//
-
-	std::cout << C_YELLOW << "\nINPUT\n";
-	printSequence(this->_container);
 
 	if (gettimeofday(&tStart, NULL))
 		throw std::runtime_error("Error: gettimeofday failed");
 	fordJohnson(this->_container, 1);
 	if (gettimeofday(&tEnd, NULL))
 		throw std::runtime_error("Error: gettimeofday failed");
-	us = (tEnd.tv_usec - tStart.tv_sec) / 1000000;
-	us = (tEnd.tv_usec - tStart.tv_usec);
-	std::cout << C_BLUE << "Time taken for sorting: " << us << "us" << RESET << std::endl; 
-	
-
-	std::cout << C_YELLOW << "\nOUTPUT\n";
-	printSequence(this->_container);
+	if (!PmergeMe<C>::isSorted(this->_container))
+			throw std::logic_error("Error : The sequence is not sorted");
+	this->_us = (tEnd.tv_usec - tStart.tv_sec) * 1000000;
+	this->_us = (tEnd.tv_usec - tStart.tv_usec);
 }
 
+template <typename C>
+int	PmergeMe<C>::getElements(void) const
+{
+	return (this->_elements);
+}
 
 template <typename C>
 void	PmergeMe<C>::fordJohnson(C &sequence, int size)
@@ -130,7 +149,7 @@ void	PmergeMe<C>::fordJohnson(C &sequence, int size)
 }
 
 template <typename C>
-void	PmergeMe<C>::makePairs(C &sequence, C &impaire, C &nonParticipating, int size)
+void	PmergeMe<C>::makePairs(C &sequence, C &impaire, C &nonParticipating, int size) const
 {
 	typename C::iterator	it;
 
@@ -200,7 +219,7 @@ void	PmergeMe<C>::sortPend(C &pend, int blockSize)
 }
 
 template <typename C>
-void	PmergeMe<C>::printDebug(C &main, C &pend, C &impaire, C &nonParcipating, int size)
+void	PmergeMe<C>::printDebug(C &main, C &pend, C &impaire, C &nonParcipating, int size) const
 {
 	typename C::iterator	it;
 
@@ -253,7 +272,7 @@ void	PmergeMe<C>::printDebug(C &main, C &pend, C &impaire, C &nonParcipating, in
 }
 
 template <typename C>
-void	PmergeMe<C>::insertPend(C &main, C &pend, int blocSize)
+void	PmergeMe<C>::insertPend(C &main, C &pend, int blocSize) const
 {
 	int						mainStart;
 	C						mainIdx;
@@ -285,32 +304,21 @@ void	PmergeMe<C>::insertPend(C &main, C &pend, int blocSize)
 	}
 
 	
-	std::cout << C_BLUE << "New main\n";
-	int i = 0;
-	for (pendRef = main.begin(); pendRef != main.end(); pendRef++)
-	{
-		if (i == 0)
-			std::cout << "[ ";
-		std::cout << *pendRef << " ";
-		if (i++ == blocSize - 1)
-		{
-			std::cout << "]  ";
-			i = 0;
-		}
-	}
-	std::cout << RESET << std::endl;
+	// std::cout << C_BLUE << "New main\n";
+	// int i = 0;
+	// for (pendRef = main.begin(); pendRef != main.end(); pendRef++)
+	// {
+	// 	if (i == 0)
+	// 		std::cout << "[ ";
+	// 	std::cout << *pendRef << " ";
+	// 	if (i++ == blocSize - 1)
+	// 	{
+	// 		std::cout << "]  ";
+	// 		i = 0;
+	// 	}
+	// }
+	// std::cout << RESET << std::endl;
 
-}
-
-template <typename C>
-void	PmergeMe<C>::printSequence(C &sequence) const
-{
-	typename C::const_iterator it;
-
-	std::cout << C_YELLOW;
-	for (it = sequence.begin(); it != sequence.end(); it++)
-		std::cout << *it << " ";
-	std::cout << RESET << std::endl;
 }
 
 template <typename C>
@@ -321,5 +329,18 @@ unsigned int PmergeMe<C>::calculateJacobsthal(unsigned int n)
 	if (n == 1)
 		return (1);
 	return PmergeMe<C>::calculateJacobsthal(n - 1) + 2 * PmergeMe<C>::calculateJacobsthal(n - 2);
+}
+
+template <typename C>
+bool	PmergeMe<C>::isSorted(C &sequence)
+{
+	typename C::iterator	it;
+
+	for (it = sequence.begin() + 1; it != sequence.end(); it++)
+	{
+		if (*(it - 1) > *it)
+			return (false);
+	}
+	return (true);
 }
 
