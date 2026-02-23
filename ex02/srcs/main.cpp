@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 22:07:59 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/23 14:51:58 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/23 16:55:27 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@ int main(int ac, char **av)
 		std::cout << C_BLUE << "\nAfter:  ";
 		vec.printSequence();
 		std::cout << C_PURPLE
-			<< "Time taken for sorting: " << vec.getUs() << "us\n"
-			<< "Time taken for sorting: " << deq.getUs() << "us\n" << RESET << std::endl;
+			<< "Time to process a range of " << vec.getElements() << " elements with std::vetor : " << vec.getUs() << "us\n"
+			<< "Time to process a range of " << deq.getElements() << " elements with std::deque : " << deq.getUs() << "us\n"
+			<< RESET << std::endl;
 
 	}
 	catch (std::exception &e) {
