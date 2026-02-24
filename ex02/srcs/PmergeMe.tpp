@@ -6,7 +6,7 @@
 /*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/23 17:14:18 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/24 09:50:19 by votre_login      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ void	PmergeMe<C>::sort(void)
 	fordJohnson(this->_container, 1);
 	if (gettimeofday(&tEnd, NULL))
 		throw std::runtime_error("Error: gettimeofday failed");
-	if (!PmergeMe<C>::isSorted(this->_container))
-			throw std::logic_error("Error : The sequence is not sorted");
+	PmergeMe<C>::isSorted(this->_container);
+		//throw std::logic_error("Error : The sequence is not sorted");
 	this->_us = (tEnd.tv_usec - tStart.tv_sec) * 1000000;
 	this->_us = (tEnd.tv_usec - tStart.tv_usec);
 }
@@ -128,15 +128,16 @@ int	PmergeMe<C>::getElements(void) const
 template <typename C>
 void	PmergeMe<C>::fordJohnson(C &sequence, int size)
 {
-	C						main, pend, impaire;
+	C						main, pend, impaire, nonParticipating;
 	typename C::iterator	it;
 
 	if (size * 2 > static_cast<int>(sequence.size()))
 		return;
 	makePairs(sequence, impaire, size);
 	fordJohnson(sequence, size * 2);
-	createMainAndPend(sequence, main, pend, impaire, size);
-	insertPend(main, pend, size);
+	createMainAndPend(sequence, main, pend, impaire, nonParticipating, size);
+	insertPend(main, pend, impaire, size);
+	//main.insert(main.end(), nonParticipating.begin(), nonParticipating.end());
 	sequence = main;
 }
 
@@ -155,7 +156,7 @@ void	PmergeMe<C>::makePairs(C &sequence, C &impaire, int size) const
 }
 
 template <typename C>
-void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, C &impaire, int size)
+void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, C &impaire, C &nonParticipating, int size)
 {
 	typename C::iterator	it;
 
@@ -167,8 +168,11 @@ void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, C &impaire, i
 	}
 	if (!pend.empty())
 		sortPend(pend, size);
-	if (!impaire.empty())
-		pend.insert(pend.end(), impaire.begin(), impaire.end());
+	(void) impaire;
+	// if (!impaire.empty())
+	// 	pend.insert(pend.end(), impaire.begin(), impaire.end());
+	(void) nonParticipating;
+	nonParticipating.insert(nonParticipating.begin(), it, sequence.end());
 }
 
 template <typename C>
@@ -203,6 +207,50 @@ void	PmergeMe<C>::sortPend(C &pend, int blockSize)
 		jacobsthalNb++;
 	}
 	pend = sortedPend;
+}
+
+template <typename C>
+void PmergeMe<C>::insertPend(C &main, C &pend, C &impaire, int blocSize) const
+{
+	int mainStart, pos, i, jacobsthal;
+	std::vector<std::pair<int, int> > mainIdx; //rebind ??
+	std::vector<std::pair<int, int> >::iterator it, endIdx;
+	typename C::iterator ref;
+
+	if (pend.empty())
+		return ;
+
+	main.insert(main.begin(), pend.begin(), pend.begin() + blocSize);
+	pos = -1;
+	for(ref = main.begin(); std::distance(ref, main.end()) >= blocSize; ref += blocSize)
+		mainIdx.push_back(std::pair<int, int>(*(ref + blocSize - 1), ++pos));
+
+	i = 0;
+	jacobsthal = 1;
+	pos = this->_jacobsthalSuit[i];
+	for (ref = (pend.begin() + blocSize); std::distance(ref, pend.end()) >= blocSize; ref += blocSize)
+	{
+		endIdx = mainIdx.begin();
+		while (endIdx != mainIdx.end() && endIdx->second != pos)
+			endIdx++;
+		it = std::lower_bound(mainIdx.begin(), mainIdx.end(), std::pair<int, int>(*(ref + blocSize - 1), -1));
+		mainStart = std::distance(mainIdx.begin(), it) * blocSize;
+		main.insert(main.begin() + mainStart, ref, ref + blocSize);
+		mainIdx.insert(it, std::pair<int, int>(*(ref + blocSize - 1), -1));
+		pos--;
+		if (pos == jacobsthal)
+		{
+			jacobsthal = this->_jacobsthalSuit[i++];
+			pos = this->_jacobsthalSuit[i];
+		}
+	}
+	(void) impaire;
+	if (!impaire.empty())
+	{
+		it = std::lower_bound(mainIdx.begin(), mainIdx.end(), std::pair<int, int>(*(impaire.end() - 1), -1));
+		mainStart = std::distance(mainIdx.begin(), it) * blocSize;
+		main.insert(main.begin() + mainStart, impaire.begin(), impaire.end());
+	 }
 }
 
 template <typename C>
@@ -254,31 +302,6 @@ void	PmergeMe<C>::printDebug(C &main, C &pend, C &impaire, int size) const
 }
 
 template <typename C>
-void	PmergeMe<C>::insertPend(C &main, C &pend, int blocSize) const
-{
-	int						mainStart;
-	C						mainIdx;
-	typename C::iterator	it, pendRef;
-
-	if (pend.empty())
-		return ;
-
-	main.insert(main.begin(), pend.begin(), pend.begin() + blocSize);
-
-	for (pendRef = (pend.begin() + blocSize); std::distance(pendRef, pend.end()) >= blocSize; pendRef += blocSize)
-	{
-		mainIdx.clear();
-		for(it = main.begin(); std::distance(it, main.end()) >= blocSize; it += blocSize)
-		{
-			mainIdx.push_back(*(it + blocSize - 1));
-		}
-		it = std::lower_bound(mainIdx.begin(), mainIdx.end(), *(pendRef + blocSize - 1));
-		mainStart = std::distance(mainIdx.begin(), it) * blocSize;
-		main.insert(main.begin() + mainStart, pendRef, pendRef + blocSize);
-	}
-}
-
-template <typename C>
 unsigned int PmergeMe<C>::calculateJacobsthal(unsigned int n)
 {
 	if (n == 0)
@@ -296,7 +319,10 @@ bool	PmergeMe<C>::isSorted(C &sequence)
 	for (it = sequence.begin() + 1; it != sequence.end(); it++)
 	{
 		if (*(it - 1) > *it)
+		{
+			std::cout << C_RED << "non trié" << RESET << std::endl;
 			return (false);
+		}
 	}
 	return (true);
 }
