@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
+/*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 22:07:10 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/24 09:35:42 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/24 10:50:30 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,9 @@ class PmergeMe
 		void	printSequence(C &sequence) const;
 		void	fordJohnson(C &sequence, int size);
 		void	makePairs(C &sequence, C &impaire, int size) const;
-		void	createMainAndPend(C &sequence, C &main, C &pend, C &impaire, C &nonParticipating, int size);
+		void	createMainAndPend(C &sequence, C &main, C &pend, int size);
 		void	sortPend(C &pend, int blockSize);
 		void	insertPend(C &main, C &pend, C &impaire, int blocSize) const;
-		void	printDebug(C &main, C &pend, C &impaire, int size) const;
 
 		static unsigned int	calculateJacobsthal(unsigned int n);
 		static bool			isSorted(C &sequence);

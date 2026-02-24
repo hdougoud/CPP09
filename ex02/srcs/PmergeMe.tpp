@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: votre_login <votre_login@student.42.fr>    +#+  +:+       +#+        */
+/*   By: hdougoud <hdougoud@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 00:57:36 by votre_login       #+#    #+#             */
-/*   Updated: 2026/02/24 09:50:19 by votre_login      ###   ########.fr       */
+/*   Updated: 2026/02/24 10:52:47 by hdougoud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,10 @@ void	PmergeMe<C>::sort(void)
 	fordJohnson(this->_container, 1);
 	if (gettimeofday(&tEnd, NULL))
 		throw std::runtime_error("Error: gettimeofday failed");
-	PmergeMe<C>::isSorted(this->_container);
-		//throw std::logic_error("Error : The sequence is not sorted");
-	this->_us = (tEnd.tv_usec - tStart.tv_sec) * 1000000;
-	this->_us = (tEnd.tv_usec - tStart.tv_usec);
+	if (!PmergeMe<C>::isSorted(this->_container))
+		throw std::logic_error("Error : The sequence is not sorted");
+	this->_us = (tEnd.tv_sec - tStart.tv_sec) * 1000000;
+	this->_us += (tEnd.tv_usec - tStart.tv_usec);
 }
 
 template <typename C>
@@ -128,16 +128,15 @@ int	PmergeMe<C>::getElements(void) const
 template <typename C>
 void	PmergeMe<C>::fordJohnson(C &sequence, int size)
 {
-	C						main, pend, impaire, nonParticipating;
+	C						main, pend, impaire;
 	typename C::iterator	it;
 
 	if (size * 2 > static_cast<int>(sequence.size()))
 		return;
 	makePairs(sequence, impaire, size);
 	fordJohnson(sequence, size * 2);
-	createMainAndPend(sequence, main, pend, impaire, nonParticipating, size);
+	createMainAndPend(sequence, main, pend, size);
 	insertPend(main, pend, impaire, size);
-	//main.insert(main.end(), nonParticipating.begin(), nonParticipating.end());
 	sequence = main;
 }
 
@@ -156,7 +155,7 @@ void	PmergeMe<C>::makePairs(C &sequence, C &impaire, int size) const
 }
 
 template <typename C>
-void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, C &impaire, C &nonParticipating, int size)
+void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, int size)
 {
 	typename C::iterator	it;
 
@@ -168,11 +167,6 @@ void	PmergeMe<C>::createMainAndPend(C &sequence, C &main, C &pend, C &impaire, C
 	}
 	if (!pend.empty())
 		sortPend(pend, size);
-	(void) impaire;
-	// if (!impaire.empty())
-	// 	pend.insert(pend.end(), impaire.begin(), impaire.end());
-	(void) nonParticipating;
-	nonParticipating.insert(nonParticipating.begin(), it, sequence.end());
 }
 
 template <typename C>
@@ -213,7 +207,7 @@ template <typename C>
 void PmergeMe<C>::insertPend(C &main, C &pend, C &impaire, int blocSize) const
 {
 	int mainStart, pos, i, jacobsthal;
-	std::vector<std::pair<int, int> > mainIdx; //rebind ??
+	std::vector<std::pair<int, int> > mainIdx;
 	std::vector<std::pair<int, int> >::iterator it, endIdx;
 	typename C::iterator ref;
 
@@ -231,9 +225,9 @@ void PmergeMe<C>::insertPend(C &main, C &pend, C &impaire, int blocSize) const
 	for (ref = (pend.begin() + blocSize); std::distance(ref, pend.end()) >= blocSize; ref += blocSize)
 	{
 		endIdx = mainIdx.begin();
-		while (endIdx != mainIdx.end() && endIdx->second != pos)
+		while (endIdx != mainIdx.end() - 1 && endIdx->second != pos)
 			endIdx++;
-		it = std::lower_bound(mainIdx.begin(), mainIdx.end(), std::pair<int, int>(*(ref + blocSize - 1), -1));
+		it = std::lower_bound(mainIdx.begin(), ++endIdx, std::pair<int, int>(*(ref + blocSize - 1), -1));
 		mainStart = std::distance(mainIdx.begin(), it) * blocSize;
 		main.insert(main.begin() + mainStart, ref, ref + blocSize);
 		mainIdx.insert(it, std::pair<int, int>(*(ref + blocSize - 1), -1));
@@ -254,54 +248,6 @@ void PmergeMe<C>::insertPend(C &main, C &pend, C &impaire, int blocSize) const
 }
 
 template <typename C>
-void	PmergeMe<C>::printDebug(C &main, C &pend, C &impaire, int size) const
-{
-	typename C::iterator	it;
-
-	std::cout << C_YELLOW << "\nThe main\n"; 
-	int i = 0;
-	for (it = main.begin(); it != main.end(); it++)
-	{
-		if (i == 0)
-			std::cout << "[ ";
-		std::cout << *it << " ";
-		if (i++ == size - 1)
-		{
-			std::cout << "]  ";
-			i = 0;
-		}
-	}
-
-	std::cout << "\nThe pend\n";
-	i = 0;
-	for (it = pend.begin(); it != pend.end(); it++)
-	{
-		if (i == 0)
-			std::cout << "[ ";
-		std::cout << *it << " ";
-		if (i++ == size - 1)
-		{
-			std::cout << "]  ";
-			i = 0;
-		}
-	}
-
-	std::cout << C_CORAL << "\nImpaire\n";
-	i = 0;
-	for (it = impaire.begin(); it != impaire.end(); it++)
-	{
-		if (i == 0)
-			std::cout << "[ ";
-		std::cout << *it << " ";
-		if (i++ == size - 1)
-		{
-			std::cout << "]  ";
-			i = 0;
-		}
-	}
-}
-
-template <typename C>
 unsigned int PmergeMe<C>::calculateJacobsthal(unsigned int n)
 {
 	if (n == 0)
@@ -319,10 +265,7 @@ bool	PmergeMe<C>::isSorted(C &sequence)
 	for (it = sequence.begin() + 1; it != sequence.end(); it++)
 	{
 		if (*(it - 1) > *it)
-		{
 			std::cout << C_RED << "non trié" << RESET << std::endl;
-			return (false);
-		}
 	}
 	return (true);
 }
